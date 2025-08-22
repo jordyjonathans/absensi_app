@@ -8,8 +8,11 @@
 # Features
 
 - React.js
+- React Redux
+- Multer
 - Drizzle ORM
 - Node.js
+- Express
 - RabbitMQ
 - MySQL
 - MongoDB
