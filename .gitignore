@@ -1,0 +1,10 @@
+backend/dist/
+backend/node_modules/
+backend/src/firebase-service-account.json
+backend/.env
+consumer/dist/
+consumer/node_modules/
+consumer/.env
+frontend2/dist/
+frontend2/node_modules/
+frontend2/.env
