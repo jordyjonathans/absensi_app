@@ -36,7 +36,7 @@ npm run start
 ## Frontend
 
 ```bash
-cd consumer
+cd frontend2
 npm install
 npm run start
 ```
