@@ -4,7 +4,7 @@ import path from "path";
 // Load service account key
 const serviceAccount = require(path.resolve(
   __dirname,
-  "../firebase-service-account.json"
+  "../../firebase-service-account.json"
 ));
 
 admin.initializeApp({

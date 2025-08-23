@@ -22,7 +22,7 @@ declare global {
 
 export const isAuth: RequestHandler = async (req, res, next) => {
   const bearer = req.headers.authorization;
-  console.log("bearer received:", bearer);
+
   if (!bearer)
     return res
       .status(401)
@@ -36,7 +36,6 @@ export const isAuth: RequestHandler = async (req, res, next) => {
       externalId: string;
     };
   } catch (e) {
-    console.log("token expired!");
     return res
       .status(401)
       .json({ status: "N", message: "Access Denied, token invalid" });
@@ -55,7 +54,6 @@ export const isAuth: RequestHandler = async (req, res, next) => {
     .innerJoin(rolesTable, eq(usersTable.roleId, rolesTable.id))
     .where(eq(usersTable.externalId, payload.externalId))
     .limit(1);
-  console.log("bearer user:", user);
 
   if (!user)
     return res

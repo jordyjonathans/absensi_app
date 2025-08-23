@@ -10,7 +10,7 @@ const profileUrl = {
 class Profile {
   getProfileInfo(externalId: string): Promise<ProfileData> {
     let profileInfoUrl = getUrlConfig().proxyUrl + profileUrl.profileUser + '/' + externalId;
-    console.log('profileInfoUrl:', profileInfoUrl);
+
     return httpRequest.get<ProfileData>(profileInfoUrl, {});
   }
 

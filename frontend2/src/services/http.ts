@@ -41,7 +41,6 @@ httpService.interceptors.request.use(
 
 httpService.interceptors.response.use(
   (response: AxiosResponse<BaseResponse<any>>) => {
-    console.log('response:', response);
     switch (response.status) {
       case 200:
       case 201:
@@ -52,7 +51,6 @@ httpService.interceptors.response.use(
     return Promise.reject(new Error(response.data.message));
   },
   error => {
-    console.log(error);
     const status = error.response?.status;
     const data = error.response?.data;
     if (status === 400) {
@@ -78,11 +76,9 @@ const httpRequest = {
     return new Promise((resolve, reject) => {
       httpService(options)
         .then((res: AxiosResponse<BaseResponse<T>>) => {
-          console.log('hasil get:', res);
           return resolve(res.data.data);
         })
         .catch(err => {
-          console.log('gagal get:', err);
           return reject(err);
         });
     });
@@ -95,11 +91,10 @@ const httpRequest = {
       data,
       responseType: 'json',
     };
-    console.log('options:', options);
+
     return new Promise((resolve, reject) => {
       httpService(options)
         .then((res: AxiosResponse<BaseResponse<T>>) => {
-          console.log('res:', res);
           return resolve(res.data.data);
         })
         .catch(err => {
@@ -124,7 +119,6 @@ const httpRequest = {
     return new Promise((resolve, reject) => {
       httpService(options)
         .then((res: AxiosResponse<BaseResponse<T>>) => {
-          console.log('put res', res);
           return resolve(res.data.data);
         })
         .catch(err => {

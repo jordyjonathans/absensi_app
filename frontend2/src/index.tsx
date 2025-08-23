@@ -6,12 +6,14 @@ import AdminRouters from './router/index';
 import { Provider } from 'react-redux';
 import { AdminStore } from './store';
 import { createRoot } from 'react-dom/client';
+import FcmListener from './components/System/FCMListener';
 
 const container = document.getElementById('root');
 if (container != null) {
   const root = createRoot(container);
   root.render(
     <Provider store={AdminStore}>
+      <FcmListener />
       <ConfigProvider locale={en_US}>
         <RouterView routers={AdminRouters} />
       </ConfigProvider>

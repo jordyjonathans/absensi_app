@@ -13,7 +13,6 @@ const homeConfig = {
 };
 
 const FrameHome: React.FC = () => {
-  console.log('==START FRAME HOME==');
   const { externalId, roleSlug } = useSelector((state: AdminState) => state.loginState.user);
 
   const dispatch = useDispatch();

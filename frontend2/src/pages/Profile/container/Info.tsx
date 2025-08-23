@@ -26,7 +26,6 @@ const ProfileInfo: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedExternalId, setSelectedExternalId] = useState<string>();
 
-  console.log('selectedExternalId:', selectedExternalId);
   useEffect(() => {
     getProfileFormInfo(myRoleSlug !== 'admin' ? myExternalId || '' : '');
   }, []);
@@ -54,7 +53,6 @@ const ProfileInfo: React.FC = () => {
   };
 
   const onFinishCallback = (values: ProfileData) => {
-    console.log('values:', values);
     const formData = new FormData();
 
     formData.append('email', values.email);
@@ -67,8 +65,6 @@ const ProfileInfo: React.FC = () => {
     if (selectedImage) {
       formData.append('profile_image', selectedImage); // matches multer field name
     }
-
-    console.log('formData:', formData);
 
     ProfileService.profileUpdate(selectedExternalId || '', formData)
       .then(() => {

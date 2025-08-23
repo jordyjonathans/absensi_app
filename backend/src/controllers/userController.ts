@@ -15,7 +15,8 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { QueueDataModel } from "src/types/queue";
-import { sendQueueMessage } from "src/lib/rmq/producer";
+import { sendQueueMessage } from "src/services/producer";
+import { sendPushNotificationToAdmins } from "src/services/firebaseMessaging";
 
 interface UserUpdateData {
   email?: string;
@@ -35,7 +36,7 @@ export const registerUser: RequestHandler = async (req, res) => {
 
   if (roleSlug !== "admin")
     return res.status(401).json({ status: "N", message: "User unauthorized" });
-  console.log("filename:" + req.file?.filename);
+
   try {
     if (!email || !password || !uploadedFile || !nama || !posisi || !no_hp)
       return res
@@ -70,7 +71,6 @@ export const registerUser: RequestHandler = async (req, res) => {
           salt: salt,
         })
         .$returningId();
-      console.log("resultTrx1" + resultTrx1);
 
       await trx.insert(employeesTable).values({
         userId: resultTrx1[0].id,
@@ -94,15 +94,10 @@ export const updateUser: RequestHandler = async (req, res) => {
   const external_id = req.params.external_id;
   const user_external_id = req.user.externalId;
   const { email, password, role_id, nama, posisi, no_hp } = body;
-  console.log("email", email);
-  console.log("password", role_id);
-  console.log("nama", nama);
-  console.log("posisi", posisi);
-  console.log("email", email);
 
   const session_role_slug = req.user.roleSlug;
   const uploadedFile = req.file as Express.Multer.File | undefined;
-  console.log("req.params:" + external_id);
+
   const db = MysqlConnection.getDbInstance();
 
   const existingUser = await db
@@ -128,18 +123,12 @@ export const updateUser: RequestHandler = async (req, res) => {
     // Hapus file lama jika ada dan file baru diunggah
     if (existingUser.length > 0 && existingUser[0].employees.fotoUrl) {
       try {
-        console.log("cwd:" + process.cwd());
-        console.log(
-          "existingUser[0].employees.fotoUrl:" +
-            existingUser[0].employees.fotoUrl
-        );
         const oldFilePath = path.join(
           UPLOAD_FOLDER_PATH,
           existingUser[0].employees.fotoUrl
         );
-        console.log("hapusing:" + oldFilePath);
+
         fs.unlinkSync(oldFilePath);
-        console.log(`Foto lama berhasil dihapus: ${oldFilePath}`);
       } catch (err) {
         console.error(`Gagal menghapus foto lama ${err}`);
       }
@@ -167,7 +156,7 @@ export const updateUser: RequestHandler = async (req, res) => {
     if (nama) userUpdateData.nama = nama;
     if (posisi) userUpdateData.posisi = posisi;
   }
-  console.log("AAAAAAAAuserUpdateData", userUpdateData);
+
   try {
     // 3. Jalankan pembaruan dalam satu transaksi
     await db.transaction(async (trx) => {
@@ -216,11 +205,14 @@ export const updateUser: RequestHandler = async (req, res) => {
       },
     };
 
-    sendQueueMessage(queueData);
+    await sendPushNotificationToAdmins(
+      `${existingUser[0].employees.nama} has Updated Profile`
+    );
+
+    await sendQueueMessage(queueData);
 
     return res.status(204).json({ status: "Y", message: "Update success" });
   } catch (e) {
-    console.log("error updating data:", e);
     return res
       .status(400)
       .json({ status: "N", message: `update data failed: ${e}` });
@@ -259,7 +251,6 @@ export const getUsers: RequestHandler = async (req, res) => {
 
 export const getUser: RequestHandler = async (req, res) => {
   const { external_id } = req.params;
-  console.log("getuser:", external_id);
 
   const db = MysqlConnection.getDbInstance();
 
@@ -284,7 +275,6 @@ export const getUser: RequestHandler = async (req, res) => {
   const selectedUser = user[0];
   if (selectedUser.fotoUrl) {
     const filePath = path.join(__dirname, "../uploads", user[0].fotoUrl);
-    console.log("PATH!!", filePath);
     if (filePath) selectedUser.fotoUrl = imageToBase64(filePath);
   }
 
@@ -296,7 +286,6 @@ export const getUser: RequestHandler = async (req, res) => {
 };
 
 export const getRoles: RequestHandler = async (req, res) => {
-  console.log("getroles triggered!!");
   const db = MysqlConnection.getDbInstance();
 
   const roles = await db

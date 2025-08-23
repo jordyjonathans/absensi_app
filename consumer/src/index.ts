@@ -9,7 +9,7 @@ async function main() {
     await mqConnection.connect();
     await mqConnection.consume(handleRecievedMessage);
   } catch (ex) {
-    console.log(`Failed to connect : ${ex}`);
+    console.error(`Failed to connect mongo : ${ex}`);
   }
 }
 

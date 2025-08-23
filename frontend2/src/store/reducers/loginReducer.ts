@@ -6,10 +6,8 @@ const login = (
   loginState: LoginState = initAdminState.loginState,
   action: AdminAction
 ): LoginState => {
-  console.log('loginState:', loginState);
-  console.log('actionData:', action.data);
   setLoginInfo(action.data);
-  console.log('action:', action.data);
+
   return {
     ...loginState,
     loginToken: action.data?.token,

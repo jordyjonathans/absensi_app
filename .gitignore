@@ -1,5 +1,6 @@
 backend/dist/
 backend/node_modules/
+backend/drizzle/
 backend/src/firebase-service-account.json
 backend/.env
 consumer/dist/

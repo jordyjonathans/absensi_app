@@ -29,7 +29,7 @@ const MainIndexStaff: React.FC = () => {
         setAttendancesSummary(attendancesSummaryData);
       })
       .catch(e => {
-        console.log('get profile catch: ', e);
+        console.error('Error attendance summary: ', e);
       });
   };
 
@@ -51,7 +51,7 @@ const MainIndexStaff: React.FC = () => {
         getAttendancesSummary();
       })
       .catch(e => {
-        console.log('get profile catch: ', e);
+        console.error('Error clockin: ', e);
       });
   };
   const handleClockOut = () => {
@@ -63,7 +63,7 @@ const MainIndexStaff: React.FC = () => {
         getAttendancesSummary();
       })
       .catch(e => {
-        console.log('get profile catch: ', e);
+        console.error('Error clock out: ', e);
       });
   };
 

@@ -16,7 +16,7 @@ const MainIndexAdmin: React.FC = () => {
         setAttendances(attendanceData);
       })
       .catch(e => {
-        console.log('get profile catch: ', e);
+        console.error('Error get attendance: ', e);
       });
   };
 

@@ -26,7 +26,7 @@ export class MysqlConnection {
     if (!MysqlConnection.instance) {
       MysqlConnection.instance = new MysqlConnection();
       await MysqlConnection.instance.connect();
-      console.log("Db Connected");
+      console.log("MYSQL DB Connected");
     }
     return MysqlConnection.instance.db!;
   }

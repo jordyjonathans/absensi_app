@@ -19,3 +19,12 @@ export const rolesTable = mysqlTable("roles", {
   roleSlug: varchar("role_slug", { length: 100 }).notNull().unique(),
   ...metaData,
 });
+
+export const fcmTokensTable = mysqlTable("fcmTokens", {
+  id: int({ unsigned: true }).autoincrement().primaryKey(),
+  userId: int("user_id", { unsigned: true })
+    .notNull()
+    .references(() => usersTable.id),
+  fcmToken: varchar("fcm_token", { length: 255 }).notNull(),
+  ...metaData,
+});

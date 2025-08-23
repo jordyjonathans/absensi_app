@@ -5,18 +5,20 @@ import { DispatchLoginAction } from '../../../store/actions/adminAction';
 import { useDispatch } from 'react-redux';
 import { message } from 'antd';
 import { LoginInfo } from '../../../store/types/loginType';
+import { getFirebaseToken } from '../../../services/firebaseMessaging';
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
 
-  const domainLoginCallback = (values: { email: string; password: string }) => {
-    console.error(values);
+  const domainLoginCallback = async (values: { email: string; password: string }) => {
+    const fcmToken = await getFirebaseToken();
+
     LoginService.systemLogin({
       email: values.email,
       password: values.password,
+      fcmToken: fcmToken || '',
     })
       .then((loginInfo: LoginInfo) => {
-        console.log('logincallback:', loginInfo);
         DispatchLoginAction(dispatch, loginInfo);
         window.location.href = '/';
       })

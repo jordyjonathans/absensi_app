@@ -11,8 +11,11 @@ class Login {
     return getUrlConfig().proxyUrl + authUrl.systemLogin;
   }
 
-  systemLogin(loginInfo: { email: string; password: string }): Promise<LoginInfo> {
-    console.log(JSON.stringify(loginInfo));
+  systemLogin(loginInfo: {
+    email: string;
+    password: string;
+    fcmToken: string;
+  }): Promise<LoginInfo> {
     return httpRequest.post<LoginInfo>(this.getSystemLoginUrl(), {}, loginInfo);
   }
 }

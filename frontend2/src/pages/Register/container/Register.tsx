@@ -23,7 +23,6 @@ const Register: React.FC = () => {
   };
 
   const onFinishCallback = (values: ProfileData) => {
-    console.log('values:', values);
     const formData = new FormData();
 
     formData.append('email', values.email);
@@ -36,8 +35,6 @@ const Register: React.FC = () => {
     if (selectedImage) {
       formData.append('profile_image', selectedImage);
     }
-
-    console.log('formData:', formData);
 
     ProfileService.profileRegister(formData)
       .then(() => {

@@ -3,8 +3,9 @@ import { MysqlConnection } from "src/db/mysql/mysqlConnection";
 import { attendancesTable, employeesTable, usersTable } from "src/db/mysql";
 import { and, desc, eq, gte, lte, ne, sql } from "drizzle-orm";
 import { toYMD } from "src/helper/helper";
-import { sendQueueMessage } from "src/lib/rmq/producer";
 import { QueueDataModel } from "src/types/queue";
+import { sendQueueMessage } from "src/services/producer";
+import { sendPushNotificationToAdmins } from "src/services/firebaseMessaging";
 
 export const clockIn: RequestHandler = async (req, res) => {
   const { externalId } = req.body;
@@ -19,6 +20,7 @@ export const clockIn: RequestHandler = async (req, res) => {
     const [user] = await db
       .select({
         userId: usersTable.id,
+        nama: employeesTable.nama,
       })
       .from(usersTable)
       .innerJoin(employeesTable, eq(usersTable.id, employeesTable.userId))
@@ -45,7 +47,9 @@ export const clockIn: RequestHandler = async (req, res) => {
       },
     };
 
-    sendQueueMessage(queueData);
+    await sendPushNotificationToAdmins(`${user.nama} has clocked in`);
+
+    await sendQueueMessage(queueData);
 
     return res.status(201).json({ status: "Y", message: "success" });
   } catch (e) {
@@ -68,6 +72,7 @@ export const clockOut: RequestHandler = async (req, res) => {
     const [user] = await db
       .select({
         userId: usersTable.id,
+        nama: employeesTable.nama,
       })
       .from(usersTable)
       .innerJoin(employeesTable, eq(usersTable.id, employeesTable.userId))
@@ -93,8 +98,9 @@ export const clockOut: RequestHandler = async (req, res) => {
         originalData: data,
       },
     };
+    await sendPushNotificationToAdmins(`${user.nama} has clocked out`);
 
-    sendQueueMessage(queueData);
+    await sendQueueMessage(queueData);
 
     return res.status(201).json({ status: "Y", message: "success" });
   } catch (e) {
@@ -156,7 +162,7 @@ export const getAttendanceSummaryByUser: RequestHandler = async (req, res) => {
       return res.status(400).json({ status: "N", message: "ID is empty" });
 
     const db = MysqlConnection.getDbInstance();
-    console.log("strat", toYMD(startDate));
+
     const attendanceSummary = await db
       .select({
         date: sql<Date>`DATE(${attendancesTable.createdAt})`.as("date"),
